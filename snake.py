@@ -13,7 +13,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 DARKGREEN = (0, 155, 0)
-DARKGREY = (40, 40, 40)
+DARKGRAY = (40, 40, 40)
 BGCOLOR = BLACK
 UP = 'up'
 DOWN = 'down'
@@ -71,4 +71,27 @@ def runGame():
             newHead = {'x': wormCoords[HEAD]['x'] - 1, 'y': wormCoords[HEAD]['y']}
         elif direction == RIGHT:
             newHead = {'x': wormCoords[HEAD]['x'] + 1, 'y': wormCoords[HEAD]['y']}
-        wormCoords.insert( newHead)
+        wormCoords.insert(0, newHead)
+        DISPLAYSURF.fill(BGCOLOR)
+        drawGrid()
+        drawWorm(wormCoords)
+        drawApple(apple)
+        drawScore(len(wormCoords) - 3)
+        pygame.display.update()
+        FPSCLOCK.tick(FPS)
+def drawPressKeyMsg():
+    pressKeySurf = BASICFONT.render('Press a key to play.', True, DARKGRAY)
+    pressKeyRect = pressKeySurf.get_rect()
+    pressKeyRect.topleft = (WINDOWWIDTH - 200, WINDOWHEIGHT - 30)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+def checkForKeyPress():
+    if len(pygame.event.get(QUIT)) > 0:
+        terminate()
+    keyUpEvents = pygame.event.get(KEYUP)
+    if len(keyUpEvents) == 0:
+        return None
+    if keyUpEvents[0].key == K_ESCAPE:
+        terminate()
+    return  keyUpEvents[0].key
+def showStartScreen():
+    titleFont = pygame.font.Font('assets/freesansbold.ttf', 100)
