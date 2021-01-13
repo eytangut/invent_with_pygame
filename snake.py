@@ -1,6 +1,8 @@
-import random, pygame, sys                                                                                              
-from pygame.locals import *                                                                                             
-FPS = 15                                                                                                                
+import random
+import pygame
+import sys
+from pygame.locals import *
+FPS = 15
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480
 CELLSIZE = 20
@@ -20,6 +22,8 @@ DOWN = 'down'
 LEFT = 'left'
 RIGHT = 'right'
 HEAD = 0
+
+
 def main():
     global FPSCLOCK, DISPLAYSURF, BASICFONT
     pygame.init()
@@ -31,10 +35,12 @@ def main():
     while True:
         runGame()
         showGameOverScreen()
+
+
 def runGame():
     startx = random.randint(5, CELLWIDTH - 6)
     starty = random.randint(5, CELLHEIGHT - 6)
-    wormCoords = [{'x': startx,     'y': starty},
+    wormCoords = [{'x': startx, 'y': starty},
                   {'x': startx - 1, 'y': starty},
                   {'x': startx - 2, 'y': starty}]
     direction = RIGHT
@@ -44,7 +50,7 @@ def runGame():
             if event.type == QUIT:
                 terminate()
             elif event.type == KEYDOWN:
-                if (event.key == K_LEFT or event.key == K_a) and direction != RIGHT:
+                if (event.key == K_LEFT or event.key ==K_a) and direction != RIGHT:
                     direction = LEFT
                 elif (event.key == K_RIGHT or event.key == K_d) and direction != LEFT:
                     direction = RIGHT
@@ -54,7 +60,8 @@ def runGame():
                     direction = DOWN
                 elif event.key == K_ESCAPE:
                     terminate()
-        if wormCoords[HEAD]['x'] == -1 or wormCoords[HEAD]['x'] == CELLWIDTH or wormCoords[HEAD]['y'] == -1 or wormCoords[HEAD]['y'] == CELLHEIGHT:
+        if wormCoords[HEAD]['x'] == -1 or wormCoords[HEAD]['x'] == CELLWIDTH or wormCoords[HEAD]['y'] == - \
+                1 or wormCoords[HEAD]['y'] == CELLHEIGHT:
             return
         for wormBody in wormCoords[1:]:
             if wormBody['x'] == wormCoords[HEAD]['x'] and wormBody['y'] == wormCoords[HEAD]['y']:
@@ -64,13 +71,21 @@ def runGame():
         else:
             del wormCoords[-1]
         if direction == UP:
-            newHead = {'x': wormCoords[HEAD]['x'], 'y': wormCoords[HEAD]['y'] - 1}
+            newHead = {
+                'x': wormCoords[HEAD]['x'],
+                'y': wormCoords[HEAD]['y'] - 1}
         elif direction == DOWN:
-            newHead = {'x': wormCoords[HEAD]['x'], 'y': wormCoords[HEAD]['y'] + 1}
+            newHead = {
+                'x': wormCoords[HEAD]['x'],
+                'y': wormCoords[HEAD]['y'] + 1}
         elif direction == LEFT:
-            newHead = {'x': wormCoords[HEAD]['x'] - 1, 'y': wormCoords[HEAD]['y']}
+            newHead = {
+                'x': wormCoords[HEAD]['x'] - 1,
+                'y': wormCoords[HEAD]['y']}
         elif direction == RIGHT:
-            newHead = {'x': wormCoords[HEAD]['x'] + 1, 'y': wormCoords[HEAD]['y']}
+            newHead = {
+                'x': wormCoords[HEAD]['x'] + 1,
+                'y': wormCoords[HEAD]['y']}
         wormCoords.insert(0, newHead)
         DISPLAYSURF.fill(BGCOLOR)
         drawGrid()
@@ -79,11 +94,15 @@ def runGame():
         drawScore(len(wormCoords) - 3)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
+
+
 def drawPressKeyMsg():
-    pressKeySurf = BASICFONT.render('Press a key to play.', True, DARKGRAY)
+    pressKeySurf = BASICFONT.render('Press a key to play.', True, WHITE)
     pressKeyRect = pressKeySurf.get_rect()
     pressKeyRect.topleft = (WINDOWWIDTH - 200, WINDOWHEIGHT - 30)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+
 def checkForKeyPress():
     if len(pygame.event.get(QUIT)) > 0:
         terminate()
@@ -92,7 +111,9 @@ def checkForKeyPress():
         return None
     if keyUpEvents[0].key == K_ESCAPE:
         terminate()
-    return  keyUpEvents[0].key
+    return keyUpEvents[0].key
+
+
 def showStartScreen():
     titleFont = pygame.font.Font('assets/freesansbold.ttf', 100)
     titleSurf1 = titleFont.render('Wormy!', True, WHITE, DARKGREEN)
@@ -116,11 +137,25 @@ def showStartScreen():
         FPSCLOCK.tick(FPS)
         degrees1 += 3
         degrees2 += 7
+
+
 def terminate():
     pygame.quit()
     sys.exit()
+
+
 def getRandomLocation():
-    return {'x': random.randint(0, CELLWIDTH - 1), 'y': random.randint(0, CELLHEIGHT - 1)}
+    return {
+        'x': random.randint(
+            0,
+            CELLWIDTH -
+            1),
+        'y': random.randint(
+            0,
+            CELLHEIGHT -
+            1)}
+
+
 def showGameOverScreen():
     gameOverFont = pygame.font.Font('assets/freesansbold.ttf', 150)
     gameSurf = gameOverFont.render('Game', True, WHITE)
@@ -139,6 +174,30 @@ def showGameOverScreen():
         if checkForKeyPress():
             pygame.event.get()
             return
+
+
 def drawScore(score):
     scoreSurf = BASICFONT.render('Score: %s' % (score), True, WHITE)
     scoreRect = scoreSurf.get_rect()
+    scoreRect.topleft = (WINDOWWIDTH - 120, 10)
+    DISPLAYSURF.blit(scoreSurf, scoreRect)
+def drawWorm(wormCoords):
+    for coord in wormCoords:
+        x = coord['x'] * CELLSIZE
+        y = coord['y'] * CELLSIZE
+        wormSegmentRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
+        pygame.draw.rect(DISPLAYSURF, DARKGREEN, wormSegmentRect)
+        wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, CELLSIZE - 8)
+        pygame.draw.rect(DISPLAYSURF, GREEN, wormInnerSegmentRect)
+def drawApple(coord):
+    x = coord['x'] * CELLSIZE
+    y = coord['y'] * CELLSIZE
+    appleRect = pygame.Rect(x, y, CELLSIZE, CELLSIZE)
+    pygame.draw.rect(DISPLAYSURF, RED, appleRect)
+def drawGrid():
+    for x in range(0, WINDOWWIDTH, CELLSIZE):
+        pygame.draw.line(DISPLAYSURF, DARKGRAY, (x, 0), (x, WINDOWHEIGHT))
+    for y in range(0, WINDOWHEIGHT, CELLSIZE):
+        pygame.draw.line(DISPLAYSURF, DARKGRAY, (0, y), (WINDOWWIDTH, y))
+if __name__ == '__main__':
+    main()
