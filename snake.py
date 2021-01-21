@@ -31,6 +31,8 @@ def main():
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     BASICFONT = pygame.font.Font('assets/freesansbold.ttf', 18)
     pygame.display.set_caption("Wormy")
+    programIcon = pygame.image.load('assets/icon.png')
+    pygame.display.set_icon(programIcon)
     showStartScreen()
     while True:
         runGame()

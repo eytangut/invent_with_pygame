@@ -52,6 +52,8 @@ def main():
     mousex = 0
     mousey = 0
     pygame.display.set_caption('Memory Game')
+    programIcon = pygame.image.load('assets/icon.png')
+    pygame.display.set_icon(programIcon)
 
     mainBoard = getRandomizedBoard()
     revealedBoxes = generateRevealedBoxesData(False)

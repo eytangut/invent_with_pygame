@@ -45,3 +45,33 @@ def main():
     BEEP2 = pygame.mixer.Sound('assets/beep2.ogg')
     BEEP3 = pygame.mixer.Sound('assets/beep3.ogg')
     BEEP4 = pygame.mixer.Sound('assets/beep4.ogg')
+    pattern = []
+    currentStep = 0
+    lastClickTime = 0
+    score = 0
+    waitingForInput = False
+    while True:
+        clickedButton = None
+        DISPLAYSURF.fill(bgColor)
+        drawButtons()
+        scoreSurf = BASICFONT.render('Score: ' + str(score), 1, WHITE)
+        scoreRect = scoreSurf.get_rect()
+        scoreRect.topleft = (WINDOWWIDTH - 100, 10)
+        DISPLAYSURF.blit(scoreSurf, scoreRect)
+        DISPLAYSURF.blit(infoSurf, infoRect)
+        checkForQuit()
+        for event in pygame.event.get():
+            if event.type == MOUSEBUTTONUP:
+                mousex, mousey = event.pos
+                clickedButton = getButtonClicked(mousex, mousey)
+            elif event.type == KEYDOWN:
+                if event.key == K_q:
+                    clickedButton = YELLOW
+                elif event.key == K_w:
+                    clickedButton = BLUE
+                elif event.key == K_a:
+                    clickedButton = RED
+                elif event.key == K_s:
+                    clickedButton = GREEN
+        if not waitingForInput:
+            pygame.display.update(())

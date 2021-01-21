@@ -7,11 +7,11 @@ WINDOWHEIGHT = 600
 TEXTCOLOR = (0, 0, 0)
 BACKGROUNDCOLOR = (255, 255, 255)
 FPS = 60
-BADDIEMINSIZE = 10
-BADDIEMAXSIZE = 40
+BADDIEMINSIZE = 12
+BADDIEMAXSIZE = 38
 BADDIEMINSPEED = 1
-BADDIEMAXSPEED = 8
-ADDNEWBADDIERATE = 6
+BADDIEMAXSPEED = 5
+ADDNEWBADDIERATE = 8
 PLAYERMOVERATE = 5
 def terminate():
     pygame.quit()
@@ -39,6 +39,8 @@ pygame.init()
 mainClock = pygame.time.Clock()
 windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption('Dodger')
+programIcon = pygame.image.load('assets/icon.png')
+pygame.display.set_icon(programIcon)
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont(None, 48)
 gameOverSound = pygame.mixer.Sound('assets/gameover.wav')

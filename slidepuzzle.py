@@ -12,7 +12,7 @@ BOARDHEIGHT = 4 # number of rows in the board
 TILESIZE = 80
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480
-FPS = 30
+FPS = 17
 BLANK = None
 
 #                 R    G    B
@@ -47,6 +47,8 @@ def main():
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     pygame.display.set_caption('Slide Puzzle')
+    programIcon = pygame.image.load('assets/icon.png')
+    pygame.display.set_icon(programIcon)
     BASICFONT = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
 
     # Store the option buttons and their rectangles in OPTIONS.
