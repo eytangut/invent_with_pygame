@@ -13,7 +13,7 @@ FLASHSPEED = 500 # in milliseconds
 FLASHDELAY = 200 # in milliseconds
 BUTTONSIZE = 200
 BUTTONGAPSIZE = 20
-TIMEOUT = 4 # seconds before game over if no button is pushed.
+TIMEOUT = 5.5 # seconds before game over if no button is pushed.
 
 #                R    G    B
 WHITE        = (255, 255, 255)
