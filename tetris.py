@@ -145,3 +145,66 @@ def main():
             pygame.mixer.music.load('assets/tetrisc.mid')
         pygame.mixer.music.play(-1, 0.0)
         runGame()
+        pygame.mixer.music.stop()
+        showTextScreen('Game Over')
+def runGame():
+    board = getBlankBoard()
+    lastMoveDownTime = time.time()
+    lastMoveSidewaysTime = time.time()
+    lastFallTime = time.time()
+    movingDown = False
+    movingLeft = False
+    movingRight = False
+    score = 0
+    level, fallFreq = calculateLevelAndFallFreq(score)
+    fallingPiece = getNewPiece()
+    nextPiece = getNewPiece()
+    while True:
+        if fallingPiece == None:
+            fallingPiece = nextPiece
+            nextPiece = getNewPiece()
+            lastFallTime = time.time()
+            if not isValidPosition(board, fallingPiece):
+                return
+        checkForQuit()
+        for event in pygame.event.get():
+            if event.type == KEYUP:
+                if (event.key == K_p):
+                    DISPLAYSURF.fill(BGCOLOR)
+                    pygame.mixer.music.stop()
+                    showTextScreen('Paused')
+                    pygame.mixer.music.play(-1, 0.0)
+                    lastFallTime = time.time()
+                    lastMoveDownTime = time.time()
+                    lastMoveSidewaysTime = time.time()
+                elif (event.key == K_LEFT or event.key == K_a):
+                    movingLeft = False
+                elif (event.key == K_RIGHT or event.key == K_d):
+                    movingRight = False
+                elif (event.key == K_DOWN or event.key == K_s):
+                    movingDown = False
+            elif event.type == KEYDOWN:
+                if (event.key == K_LEFT or event.key == K_a) and isValidPosition(board, fallingPiece, adjX=-1):
+                    fallingPiece['x'] -= 1
+                    movingLeft = True
+                    movingRight = False
+                    lastMoveSidewaysTime = time.time()
+                elif (event.key == K_RIGHT or event.key == K_d) and isValidPosition(board, fallingPiece, adjX=1):
+
+                    fallingPiece['x'] += 1
+                    movingRight = True
+                    movingLeft = False
+                    lastMoveSidewaysTime = time.time()
+                elif (event.key == K_UP or event.key == K_w):
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(SHAPES[fallingPiece['shape']])
+                    if not isValidPosition(board, fallingPiece):
+                        fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(SHAPES[fallingPiece['shape']])
+                elif event.key == K_q:
+                    fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(SHAPES[fallingPiece['shape']])
+                    if not  isValidPosition(board, fallingPiece):
+                        fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(SHAPES[fallingPiece['shape']])
+                elif (event.key == K_DOWN or event.key == K_s):
+                    movingDown = True
+                    if isValidPosition(board, fallingPiece, adjY=1):
+                        fallingPiece['y'] += 1
+                    lastMoveDownTime = time.time()
