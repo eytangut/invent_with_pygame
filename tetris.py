@@ -250,4 +250,28 @@ def terminate():
     sys.exit()
 def checkForKeyPress():
     checkForQuit()
-    fir event in pygame.event.get([KEYDOWN, KEYUP]):
+    for event in pygame.event.get([KEYDOWN, KEYUP]):
+         if event.type == KEYDOWN:
+             continue
+        return event.key
+    return None
+def showTextScreen(text):
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
+    DISPLAYSURF.blit(titleSurf, titleRect)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 3)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+    pressKeySurf, pressKeyRect = makeTextObjs('Press a key to play.', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 100)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+    while checkForKeyPress() == None:
+        pygame.display.update()
+        FPSCLOCK.tick()
+def checkForQuit():
+    for event in pygame.event.get(QUIT):
+        terminate()
+    for event in pygame.event.get(KEYUP):
+        if event.key == K_ESCAPE:
+            terminate()
+        pygame.event.post(event)
