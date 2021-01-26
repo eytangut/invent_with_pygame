@@ -126,7 +126,7 @@ T_SHAPE_TEMPLATE = [['.....',
                      '.OO..',
                      '..O..',
                      '.....']]
-shapes = {'S': S_SHAPE_TEMPLATE, 'Z': Z_SHAPE_TEMPLATE, 'J': J_SHAPE_TEMPLATE, 'L': L_SHAPE_TEMPLATE, 'I': I_SHAPE_TEMPLATE, 'O': O_SHAPE_TEMPLATE, 'T': T_SHAPE_TEMPLATE}
+SHAPES = {'S': S_SHAPE_TEMPLATE, 'Z': Z_SHAPE_TEMPLATE, 'J': J_SHAPE_TEMPLATE, 'L': L_SHAPE_TEMPLATE, 'I': I_SHAPE_TEMPLATE, 'O': O_SHAPE_TEMPLATE, 'T': T_SHAPE_TEMPLATE}
 def main():
     global FPSCLOCK, DISPLAYSURF, BASICFONT, BIGFONT
     pygame.init()
@@ -213,7 +213,7 @@ def runGame():
                     movingLeft = False
                     movingRight = False
                     for i in range(1, BOARDHEIGHT):
-                        if not isValidPosition(board, fallingPiece, adjY=i)
+                        if not isValidPosition(board, fallingPiece, adjY=i):
                             break
                     fallingPiece['y'] += i - 1
         if (movingLeft or movingRight) and time.time() - lastMoveSidewaysTime > MOVESIDEWAYSFREQ:
@@ -253,7 +253,7 @@ def checkForKeyPress():
     for event in pygame.event.get([KEYDOWN, KEYUP]):
          if event.type == KEYDOWN:
              continue
-        return event.key
+         return event.key
     return None
 def showTextScreen(text):
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
@@ -275,3 +275,93 @@ def checkForQuit():
         if event.key == K_ESCAPE:
             terminate()
         pygame.event.post(event)
+def calculateLevelAndFallFreq(score):
+    level = int(score / 10) + 1
+    fallFreq = 0.27 - (level * 0.02)
+    return  level, fallFreq
+def getNewPiece():
+    shape = random.choice(list(SHAPES.keys()))
+    newPiece = {'shape': shape, 'rotation': random.randint(0, len(SHAPES[shape]) - 1), 'y': -2 , 'color': random.randint(0, len(COLORS) - 1)}
+    return newPiece
+def addToBoard(board, piece):
+    for x in range(TEMPLATEWIDTH):
+        for y in range(TEMPLATEHEIGHT):
+            if SHAPES[piece['shape']][piece['rotation']][y][x] != BLANK:
+                board[x + piece['x']][y + piece['y']] = piece['color']
+def getBlankBoard():
+    board = []
+    for i in range(BOARDWIDTH):
+        board.append([BLANK] * BOARDHEIGHT)
+    return  board
+def isOnBoard(x, y):
+    return x >= 0 and x < BOARDWIDTH and y < BOARDHEIGHT
+def isValidPosition(board, piece, adjX=0, adjY=0):
+    for x in range(TEMPLATEWIDTH):
+        for y in range(TEMPLATEHEIGHT):
+            isAboveBoard = y + piece['y'] + adjY < 0
+            if isAboveBoard or SHAPES[piece['shape']][piece['rotation']][y][x] == BLANK:
+                continue
+            if not isOnBoard(x + piece['x'] + adjX, y + piece['y'] + adjY):
+                return False
+            if board[x + piece['x'] + adjX][y + piece['y'] + adjY] != BLANK:
+                return False
+    return True
+def isCompleteLine(board, y):
+    for x in range(BOARDWIDTH):
+        if board[x][y] == BLANK:
+            return False
+    return True
+def removeCompleteLInes(board):
+    numLinesRemoved = 0
+    y = BOARDHEIGHT - 1
+    while y >= 0:
+        if isCompleteLine(board, y):
+            for pullDownY in range(y, 0, -1):
+                for x in range(BOARDWIDTH):
+                    board[x][pullDownY] = board[x][pullDownY - 1]
+            for x in range(BOARDWIDTH):
+                board[x][0] = BLANK
+            numLinesRemoved += 1
+        else:
+            y -= 1
+    return numLinesRemoved
+def convertToPixelCoords(boxx, boxy):
+    return (XMARGIN + (boxx * BOXSIZE)), (TOPMARGIN + (boxy * BOXSIZE))
+def drawBox(boxx, boxy, color,  pixelx=None, pixely=None):
+    if color == BLANK:
+        return
+    if pixelx == None and pixely == None:
+        pixelx, pixely = convertToPixelCoords(boxx, boxy)
+        pygame.draw.rect(DISPLAYSURF, COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
+        pygame.draw.rect(DISPLAYSURF, LIGHTCOLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
+def drawBoard(board):
+    pygame.draw.rect(DISPLAYSURF, BORDERCOLOR, (XMARGIN - 3, TOPMARGIN - 7, (BOARDWIDTH * BOXSIZE) + 8, (BOARDHEIGHT * BOXSIZE) + 8), 5)
+    pygame.draw.rect(DISPLAYSURF, BGCOLOR, (XMARGIN, TOPMARGIN, BOXSIZE * BOARDWIDTH, BOXSIZE * BOARDHEIGHT))
+    for x in range(BOARDWIDTH):
+        for y in range(BOARDHEIGHT):
+            drawBox(x, y, board[x][y])
+def drawStatus(score, level):
+    scoreSurf = BASICFONT.render('Score: %s' % score, True, TEXTCOLOR)
+    scoreRect = scoreSurf.get_rect()
+    scoreRect.topleft = (WINDOWWIDTH - 150, 20)
+    DISPLAYSURF.blit(scoreSurf, scoreRect)
+    levelSurf = BASICFONT.render('Level: %s' % level, True, TEXTCOLOR)
+    levelRect = levelSurf.get_rect()
+    levelRect.topleft = (WINDOWWIDTH - 150, 50)
+    DISPLAYSURF.blit(levelSurf, levelRect)
+def drawPiece(piece, pixelx=None, pixely=None):
+    shapeToDraw = SHAPES[piece['shape']][piece['rotation']]
+    if pixelx == None and pixely == None:
+        pixelx, pixely = convertToPixelCoords(piece['x'], piece['y'])
+    for x in range(TEMPLATEWIDTH):
+        for y in range(TEMPLATEHEIGHT):
+            if shapeToDraw[y][x] != BLANK:
+                drawBox(None, None, piece['color'], pixelx + (x * BOXSIZE), pixely + (y * BOXSIZE))
+def drawNextPiece(piece):
+    nextSurf = BASICFONT.render('Next:', True, TEXTCOLOR)
+    nextRect = nextSurf.get_rect()
+    nextRect.topleft = (WINDOWWIDTH - 120, 80)
+    DISPLAYSURF.blit(nextSurf, nextRect)
+    drawPiece(piece, pixelx=WINDOWWIDTH - 120, pixely=100)
+if __name__ == '__main__':
+    main()
