@@ -44,7 +44,7 @@ pygame.display.set_icon(programIcon)
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont(None, 48)
 gameOverSound = pygame.mixer.Sound('assets/gameover.wav')
-pygame.mixer.music.load('assets/background.mid')
+#pygame.mixer.music.load('assets/background.mid')
 playerImage = pygame.image.load('assets/player.png')
 playerRect = playerImage.get_rect()
 baddieImage = pygame.image.load('assets/baddie.png')
@@ -61,7 +61,7 @@ while True:
     moveLeft = moveRight = moveUp = moveDown = False
     reverseCheat = slowCheat = False
     baddieAddCounter = 0
-    pygame.mixer.music.play(-1, 0.0)
+    #pygame.mixer.music.play(-1, 0.0)
     while True:
         score += 1
         for event in pygame.event.get():
@@ -87,10 +87,10 @@ while True:
             if event.type == KEYUP:
                 if event.key == K_z:
                     reverseCheat = False
-                    score = 0
+                    
                 if event.key == K_x:
                     slowCheat = False
-                    score = 0
+                    
                 if event.key == K_ESCAPE:
                     terminate()
                 if event.key == K_LEFT or event.key == K_a:

@@ -139,15 +139,14 @@ def main():
     pygame.display.set_icon(programIcon)
     showTextScreen('Tetromino')
     while True:
-        if random.randint(0, 1) == 0:
-            pygame.mixer.music.load('assets/tetrisb.mid')
-        else:
-            pygame.mixer.music.load('assets/tetrisc.mid')
-        pygame.mixer.music.play(-1, 0.0)
+
+
+        #pygame.mixer.music.play(-1, 0.0)
         runGame()
         pygame.mixer.music.stop()
         showTextScreen('Game Over')
 def runGame():
+
     board = getBlankBoard()
     lastMoveDownTime = time.time()
     lastMoveSidewaysTime = time.time()
@@ -158,9 +157,13 @@ def runGame():
     score = 0
     level, fallFreq = calculateLevelAndFallFreq(score)
     fallingPiece = getNewPiece()
+    print( "1" ,fallingPiece)
     nextPiece = getNewPiece()
+    print("2" ,nextPiece)
     while True:
+        
         if fallingPiece == None:
+            print(1)
             fallingPiece = nextPiece
             nextPiece = getNewPiece()
             lastFallTime = time.time()
@@ -280,6 +283,7 @@ def calculateLevelAndFallFreq(score):
     fallFreq = 0.27 - (level * 0.02)
     return  level, fallFreq
 def getNewPiece():
+    
     # return a random new piece in a random rotation and color
     shape = random.choice(list(SHAPES.keys()))
     newPiece = {'shape': shape,
